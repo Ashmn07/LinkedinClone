@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base{
+    body{
+        @apply bg-gray-100;
+    }
+}
+
+@layer components{
+    .intent{
+        @apply flex justify-between items-center p-4 hover:shadow-lg rounded-lg 
+        cursor-pointer text-black bg-white max-w-md mx-auto xl:mx-0;
+    }
+}
