@@ -9,8 +9,9 @@ import Feed from '../components/Feed'
 import Header from '../components/Header'
 import Modal from '../components/Modal'
 import Sidebar from '../components/Sidebar'
+import {connectToDatabase} from '../util/mongodb'
 
-export default function Home() {
+export default function Home({posts}) {
   const router = useRouter();
   const { status } = useSession({
     required: true,
@@ -35,7 +36,7 @@ export default function Home() {
       <main className="flex justify-center gap-x-5 px-4 sm:px-12">
         <div className="flex flex-col md:flex-row gap-5">
           <Sidebar/>
-          <Feed/>
+          <Feed posts={posts}/>
         </div>
         <AnimatePresence>
           {modalOpen && (
@@ -57,9 +58,21 @@ export async function getServerSideProps(context){
       }
     }
   }
+
+  const {db} = await connectToDatabase()
+  const posts = await db.collection('posts').find().sort({timestamp:-1}).toArray()
   return{
     props:{
-      session
+      session,
+      posts:posts.map(post => ({
+        _id:post._id.toString(),
+        input:post.input, 
+        photoUrl: post.photoUrl,
+        username: post.username,
+        email: post.email,
+        userImg: post.userImg,
+        createdAt: post.createdAt,
+      }))
     }
   }
 }
